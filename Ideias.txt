@@ -1,0 +1,9 @@
+- ALGORITMO NÃO PODE TER COMPARAÇÕES => RADIX SORT
+- Selection Sort é impraticável com entrada grande (2 milhões)
+- Ordenar mês a mês
+- Acesso direto à memória?
+
+PROFESSOR
+- COUNTING SORT TEM PROBLEMAS => ñ saber o tamanho dos logs
+- ALGORITMO DE ORDENAÇÃO ESTÁVEL => mantém ordem de entrada caso os logs sejam iguais
+- USAR SWITCH PARA COLOCAR NÚMERO DOS MESES
