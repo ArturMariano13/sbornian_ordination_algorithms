@@ -16,3 +16,11 @@ COUNTING SORT NÃO É BOM QUANDO NÃO SE CONHECE A ESTRUTURA DOS DADOS => NÃO S
 DO MAIOR LOG.
 
 SELECTION SORT: > 10 minutos e nada => SOLUÇÃO RUIM
+
+
+COUNTING SORT
+Quando modifico algum dos logs para um número muito grande, torna-se impraticável. Ele cria um vetor do tamanho do maior log, tornando o processo demorado. 
+
+
+ENCONTRAR O MÊS DO LOG EXISTENTE
+ordenar apenas o mês em que o log se encontra.

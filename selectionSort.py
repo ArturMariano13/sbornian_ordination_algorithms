@@ -26,7 +26,6 @@ def selectionSort(dados_json):
 
         dados_json[i], dados_json[indice_menor] = dados_json[indice_menor], dados_json[i]
 
-
 ler_json_grande('data.json')
 print("Terminou leitura")
 
