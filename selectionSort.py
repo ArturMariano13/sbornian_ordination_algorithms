@@ -12,7 +12,6 @@ def ler_json_grande(path):
             dados_json.append(log)
 
 def selectionSort(dados_json):
-    print("Iniciando ordenação")
     tamanho = len(dados_json)
 
     for i in range(tamanho - 1):

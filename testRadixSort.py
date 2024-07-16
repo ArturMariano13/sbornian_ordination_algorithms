@@ -1,15 +1,11 @@
-import json
+import ijson
 import time
+from Log import Log
 
-def radix_sort_logs(logs):
-    # Lista ordenada de meses
-    meses_ordem = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+dados_json = []
 
-    # Função para extrair o mês e o número do log no mês
-    def get_month_and_log_number(log):
-        return meses_ordem.index(log['month']), log['log']
-
-    # Função de ordenação estável por mês e número do log no mês
+def radix_sort_logs(logs, key_func):
+    # Função de ordenação estável
     def stable_sort(arr, key_func):
         buckets = {}
         for item in arr:
@@ -22,35 +18,60 @@ def radix_sort_logs(logs):
             result.extend(buckets[key])
         return result
 
-    # Ordenar primeiro por número do log no mês, depois por mês
-    logs_sorted_by_log_number = stable_sort(logs, lambda x: x['log'])
-    logs_sorted = stable_sort(logs_sorted_by_log_number, lambda x: (meses_ordem.index(x['month']), x['log']))
-    
-    return logs_sorted
+    return stable_sort(logs, key_func)
 
-# Função para carregar os dados do arquivo JSON
-def load_logs_from_json(filename):
-    with open(filename, 'r') as file:
-        logs = json.load(file)
-    return logs
+def ler_json_grande(path):
+    with open(path, 'rb') as f:
+        objetos = ijson.items(f, 'item')
+        for objeto in objetos:
+            log = Log(objeto['month'], objeto['log'], objeto['msg'], objeto['user'])
+            dados_json.append(log)
 
-# Função para salvar os logs ordenados em um arquivo JSON
-def save_logs_to_json(logs, filename):
-    with open(filename, 'w') as file:
-        json.dump(logs, file)
+def buscar_registro_por_posicao(logs, posicao):
+    if posicao < 0 or posicao >= len(logs):
+        return None
+    return logs[posicao]
 
 # Exemplo de uso
 filename = 'data.json'  # Nome do arquivo com os registros de log em formato JSON
-logs = load_logs_from_json(filename)
+ler_json_grande(filename)
 
-# Ordenar os logs usando Radix Sort
+# Lista ordenada de meses
+meses_ordem = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+# Ordenar os logs primeiro pelos meses
 start_time = time.time()
-logs_ordenados = radix_sort_logs(logs)
+logs_ordenados_por_mes = radix_sort_logs(dados_json, lambda x: meses_ordem.index(x.month))
 end_time = time.time()
-print("\nTempo Radix Sort: %s seconds" % (end_time - start_time))
-print("Ordenação concluída")
+print("\nTempo de Ordenação por Mês: %s seconds" % (end_time - start_time))
+print("Ordenação por mês concluída")
 
-# Salvar os logs ordenados em um novo arquivo JSON
-filename_ordenado = 'logs_ordenados.json'  # Nome do arquivo para os logs ordenados
-save_logs_to_json(logs_ordenados, filename_ordenado)
+# Suponha que você tenha um índice aproximado do impostor
+indice_impostor = 1000000  # Exemplo de índice
+
+# Localizar o mês do impostor com base na posição
+impostor_log = buscar_registro_por_posicao(logs_ordenados_por_mes, indice_impostor)
+if impostor_log:
+    impostor_mes = impostor_log.month
+    print(f"Impostor encontrado no mês: {impostor_mes}")
+
+    # Filtrar os logs para o mês do impostor
+    logs_mes_impostor = [log for log in logs_ordenados_por_mes if log.month == impostor_mes]
+
+    # Ordenar os logs dentro desse mês específico pelos números dos logs
+    start_time = time.time()
+    logs_mes_impostor_ordenados = radix_sort_logs(logs_mes_impostor, lambda x: x.number)
+    end_time = time.time()
+    print("\nTempo de Ordenação dentro do Mês do Impostor: %s seconds" % (end_time - start_time))
+    print("Ordenação dentro do mês concluída")
+
+    # Localizar a posição do impostor dentro do mês ordenado
+    impostor_final = buscar_registro_por_posicao(logs_mes_impostor_ordenados, indice_impostor - logs_ordenados_por_mes.index(impostor_log))
+    if impostor_final:
+        print(f"Impostor final encontrado: {impostor_final}")
+    else:
+        print(f"Impostor não encontrado após a ordenação dentro do mês")
+else:
+    print(f"Impostor não encontrado na posição {indice_impostor}")
+
 print("Programa finalizado!")
