@@ -25,3 +25,6 @@ Quando modifico algum dos logs para um número muito grande, torna-se impraticá
 ENCONTRAR O MÊS DO LOG EXISTENTE
 ordenar apenas o mês em que o log se encontra.
 	DEU CERTO!! - tempo de ordenação 1.2 segundos no total (0.8 meses e 0.3 no mês)
+
+
+TALVEZ UTILIZAR TABELA HASH PARA ENCONTRAR LOG CORRETO

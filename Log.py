@@ -3,12 +3,14 @@ class Log:
     number = 0
     msg = ""
     user = ""
+    monthIndex = 0
 
     def __init__(self, month, number, msg, user):
         self.month = month
         self.number = number
         self.msg = msg
         self.user = user
+        self.monthIndex = self.get_month_index()
 
     def get_month_index(self):
         months = {

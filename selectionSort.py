@@ -25,7 +25,7 @@ def selectionSort(dados_json):
 
         dados_json[i], dados_json[indice_menor] = dados_json[indice_menor], dados_json[i]
 
-ler_json_grande('data.json')
+ler_json_grande('data_tests.json')
 print("Terminou leitura")
 
 start_time = time.time()
@@ -33,5 +33,8 @@ selectionSort(dados_json)
 end_time = time.time()
 
 tamanho = len(dados_json)
+
+for i in range (tamanho - 1):
+    print(dados_json[i])
 
 print("Tempo de Ordenação: %s seconds" % (end_time - start_time))
