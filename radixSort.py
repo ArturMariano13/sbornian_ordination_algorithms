@@ -1,82 +1,81 @@
+import json
 import time
-import random
+from Log import Log
 
-# Python program for implementation of Radix Sort
-# A function to do counting sort of arr[] according to
-# the digit represented by exp.
+dados_json = []
 
+def counting_sort(input_array, key_func, max_value):
+    count_array = [0] * (max_value + 1)
+    output_array = [None] * len(input_array)
 
-def countingSort(arr, exp1):
+    for item in input_array:
+        key = key_func(item)
+        count_array[key] += 1
 
-	n = len(arr)
+    for i in range(1, max_value + 1):
+        count_array[i] += count_array[i - 1]
 
-	# The output array elements that will have sorted arr
-	output = [0] * (n)
+    for item in reversed(input_array):
+        key = key_func(item)
+        output_array[count_array[key] - 1] = item
+        count_array[key] -= 1
 
-	# initialize count array as 0
-	count = [0] * (10)
+    return output_array
 
-	# Store count of occurrences in count[]
-	for i in range(0, n):
-		index = arr[i] // exp1
-		count[index % 10] += 1
+def radix_sort(input_array, key_funcs, max_values):
+    total_sort_time = 0
+    for key_func, max_value in zip(key_funcs, max_values):
+        start_time = time.time()
+        input_array = counting_sort(input_array, key_func, max_value)
+        end_time = time.time()
+        total_sort_time += (end_time - start_time)
+    return input_array, total_sort_time
 
-	# Change count[i] so that count[i] now contains actual
-	# position of this digit in output array
-	for i in range(1, 10):
-		count[i] += count[i - 1]
+def ler_json_grande(path):
+    with open(path, 'r') as f:
+        objetos = json.load(f)
+        for objeto in objetos:
+            log = Log(objeto['month'], objeto['log'], objeto['msg'], objeto['user'])
+            dados_json.append(log)
 
-	# Build the output array
-	i = n - 1
-	while i >= 0:
-		index = arr[i] // exp1
-		output[count[index % 10] - 1] = arr[i]
-		count[index % 10] -= 1
-		i -= 1
+def buscar_registro_por_posicao(logs, posicao):
+    if posicao < 1 or posicao > len(logs):
+        return None
+    return logs[posicao - 1] 
 
-	# Copying the output array to arr[],
-	# so that arr now contains sorted numbers
-	i = 0
-	for i in range(0, len(arr)):
-		arr[i] = output[i]
+filename = 'data.json'  
+ler_json_grande(filename)
 
-# Method to do Radix Sort
+meses_ordem = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-
-def radixSort(arr):
-
-	# Find the maximum number to know number of digits
-	max1 = max(arr)
-
-	# Do counting sort for every digit. Note that instead
-	# of passing digit number, exp is passed. exp is 10^i
-	# where i is current digit number
-	exp = 1
-	while max1 / exp >= 1:
-		countingSort(arr, exp)
-		exp *= 10
+for log in dados_json:
+    log.monthIndex = meses_ordem.index(log.month)
 
 
+dados_json, tempo_ordenacao_meses = radix_sort(dados_json, [lambda log: log.monthIndex], [11])
 
-# Gerar um array com 100000 números aleatórios no intervalo de 0 a 999999
-arr_large = [random.randint(0, 999999) for _ in range(100000)]
-# Driver code
-arr = [170, 45, 75, 90, 802, 24, 2, 66]
+indice_impostor = 1000001  
 
-# Measure time
-start_time = time.time()
+impostor_log = buscar_registro_por_posicao(dados_json, indice_impostor)
+if impostor_log:
+    impostor_mes = impostor_log.month
 
-# Function Call
-radixSort(arr_large)
+    logs_mes_impostor = [log for log in dados_json if log.month == impostor_mes]
 
-end_time = time.time()
+    logs_mes_impostor_ordenados, tempo_ordenacao_mes_impostor = radix_sort(logs_mes_impostor, [lambda x: x.number], [max(log.number for log in logs_mes_impostor)])
 
-# Print sorted array
-for i in range(len(arr_large)):
-	print(arr_large[i], end=" ")
+    inicio_mes = dados_json.index(logs_mes_impostor[0])
+    dados_json[inicio_mes:inicio_mes+len(logs_mes_impostor)] = logs_mes_impostor_ordenados
 
-# Print execution time
-print("\nTempo Radix Sort: %s seconds" % (end_time - start_time))
+    impostor_final = buscar_registro_por_posicao(dados_json, indice_impostor)
+    if impostor_final:
+        print(f"Impostor final encontrado: {impostor_final}")
+    else:
+        print(f"Impostor não encontrado após a ordenação dentro do mês")
+else:
+    print(f"Impostor não encontrado na posição {indice_impostor}")
 
-# This code is contributed by Mohit Kumra
-# Edited by Patrick Gallagher
+tempo_total_ordenacao = tempo_ordenacao_meses + tempo_ordenacao_mes_impostor
+print("\nTempo Total de Ordenação: %s segundos" % tempo_total_ordenacao)
+
+print("Programa finalizado!")

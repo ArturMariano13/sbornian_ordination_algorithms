@@ -1,9 +1,2 @@
-Finalizar código
-
-Testar radix e counting e inserir no artigo prints
-
-Inserir print do código final pronto
-
-Fazer considerações finais
-
 Revisar artigo
+Ajustar arquivos para entrega
